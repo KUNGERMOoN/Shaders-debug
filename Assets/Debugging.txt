@@ -1,0 +1,12 @@
+All the conclusions in this "investigation" are based on the profiler data from builds
+
+Frequently dispatching the shader is not the cause
+(removing Dispatch() enteirly from the code doesn't get rid of the issue)
+
+Is continously reading the data back from the shader causing the problem?
+Yes. (commenting the lines 27-32 in Test.cs cause the lag spikes to disappear)
+
+Wil the lag appear if we instead disconnect the buffer from the compute shader?
+No
+
+IMPORTANT: Timeline view shows that Gfx.UpdateAsyncReadbackData causes the lag
