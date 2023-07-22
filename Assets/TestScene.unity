@@ -566,6 +566,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Shader: {fileID: 7200000, guid: 8fe183f8fead50547824a50c88b89d35, type: 3}
+  GetData: 0
 --- !u!4 &2082698530
 Transform:
   m_ObjectHideFlags: 0

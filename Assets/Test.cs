@@ -1,4 +1,3 @@
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -7,34 +6,40 @@ public class Test : MonoBehaviour
     public ComputeShader Shader;
     ComputeBuffer buffer;
 
-    AsyncGPUReadbackRequest request;
+    GraphicsFence? fence;
 
-    NativeArray<int> Data;
+    int[] Data;
+
+    public bool GetData = true;
 
     private void Awake()
     {
-        Data = new NativeArray<int>(60000000, Allocator.Persistent);
+        Data = new int[60000000];
         buffer = new ComputeBuffer(Data.Length, sizeof(int));
         buffer.SetData(Data);
 
         Shader.SetBuffer(0, "buffer", buffer);
 
-        request = AsyncGPUReadback.Request(buffer);
+        CreateFence();
     }
 
     private void Update()
     {
-        if (request.done && !request.hasError)
+        if (fence != null && fence.Value.passed)
         {
-            Data.Dispose();
-            Data = request.GetData<int>();
-            request = AsyncGPUReadback.Request(buffer);
+            if (GetData)
+                buffer.GetData(Data);
+            //ReadingData();
+            CreateFence();
         }
+        //else NotReadingData();
     }
 
-    private void OnDestroy()
+    void ReadingData() { }
+    void NotReadingData() { }
+
+    void CreateFence()
     {
-        buffer.Dispose();
-        Data.Dispose();
+        fence = Graphics.CreateGraphicsFence(GraphicsFenceType.AsyncQueueSynchronisation, SynchronisationStageFlags.ComputeProcessing);
     }
 }
